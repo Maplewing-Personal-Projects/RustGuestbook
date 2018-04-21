@@ -26,7 +26,7 @@ struct Post {
 #[derive(Serialize)]
 struct IndexData{
     title: String,
-    index_content: String,
+    announcement: String,
     posts: Vec<Post>,
 }
 
@@ -45,7 +45,7 @@ fn index() -> Template {
 
     let context = IndexData {
         title: "Rust GuestBook".to_string(),
-        index_content: "Welcome to my guestbook.".to_string(),
+        announcement: "Welcome to my guestbook.".to_string(),
         posts: post_iter.map(|post| post.unwrap()).collect(),
     };
 
