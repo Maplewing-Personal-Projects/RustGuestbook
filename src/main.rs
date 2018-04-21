@@ -24,11 +24,10 @@ struct Post {
 #[get("/")]
 fn index() -> Template {
     let mut context = HashMap::new();
-    context.insert("title", "Rust GuestBook");
-    context.insert("index_content", "Welcome to my guestbook.");
+    context.insert("title", "Rust GuestBook".to_string());
+    context.insert("index_content", "Welcome to my guestbook.".to_string());
 
     let database_url = "db/guestbook.db";
-    let post_data = post.get();
     let conn = Connection::open(database_url).unwrap();
     let mut stmt = conn.prepare("SELECT name, title, content FROM post").unwrap();
     let post_iter = stmt.query_map(&[], |row| {
@@ -41,11 +40,12 @@ fn index() -> Template {
 
     let mut post_content = String::new();
     for post in post_iter {
+        let post_data = post.unwrap();
         let mut post_context = HashMap::new();
-        post_context.insert("name", &post.name);
-        post_context.insert("title", &post.title);
-        post_context.insert("content", &post.content);
-        post_content.push_str(Template::show("templates/", "post", post_context));
+        post_context.insert("name", &post_data.name);
+        post_context.insert("title", &post_data.title);
+        post_context.insert("content", &post_data.content);
+        post_content.push_str(&Template::show("templates/", "post", post_context).unwrap());
     }
     context.insert("posts", post_content);
 
