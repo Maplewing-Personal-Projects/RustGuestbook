@@ -1,0 +1,5 @@
+[development]
+address = "knightzone.org"
+port = 8450
+log = "normal"
+limits = { forms = 32768 }
