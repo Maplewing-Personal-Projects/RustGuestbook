@@ -6,6 +6,7 @@ authors = ["Maplewing <sinmaplewing@gmail.com>"]
 [dependencies]
 rocket = "0.3.8"
 rocket_codegen = "0.3.8"
+diesel = { version = "1.1", features = ["sqlite", "r2d2"] }
 
 [dependencies.rocket_contrib]
 version = "*"
