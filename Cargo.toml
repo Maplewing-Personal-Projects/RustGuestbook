@@ -8,6 +8,9 @@ rocket = "0.3.8"
 rocket_codegen = "0.3.8"
 rusqlite = "*"
 chrono = "*"
+serde = "*"
+serde_derive = "*"
+serde_json = "*"
 
 [dependencies.rocket_contrib]
 version = "*"

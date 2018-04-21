@@ -3,30 +3,35 @@
 #![plugin(rocket_codegen)]
 
 extern crate chrono;
+extern crate serde;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rusqlite;
 
 use std::collections::HashMap;
 use chrono::Utc;
+#[macro_use] extern crate serde_derive;
 use rocket::response::Redirect;
 use rocket::request::Form;
 use rocket_contrib::Template;
 use rusqlite::Connection;
 
-#[derive(FromForm)]
+#[derive(FromForm, Serialize)]
 struct Post {
     name: String,
     title: String,
     content: String,
 }
 
+#[derive(Serialize)]
+struct IndexData{
+    title: String,
+    index_content: String,
+    posts: Vec<Post>,
+}
+
 #[get("/")]
 fn index() -> Template {
-    let mut context = HashMap::new();
-    context.insert("title", "Rust GuestBook".to_string());
-    context.insert("index_content", "Welcome to my guestbook.".to_string());
-
     let database_url = "db/guestbook.db";
     let conn = Connection::open(database_url).unwrap();
     let mut stmt = conn.prepare("SELECT name, title, content FROM post").unwrap();
@@ -38,16 +43,11 @@ fn index() -> Template {
         }
     }).unwrap();
 
-    let mut post_content = String::new();
-    for post in post_iter {
-        let post_data = post.unwrap();
-        let mut post_context = HashMap::new();
-        post_context.insert("name", &post_data.name);
-        post_context.insert("title", &post_data.title);
-        post_context.insert("content", &post_data.content);
-        post_content.push_str(&Template::show("templates/", "post", post_context).unwrap());
-    }
-    context.insert("posts", post_content);
+    let context = IndexData {
+        title: "Rust GuestBook".to_string(),
+        index_content: "Welcome to my guestbook.".to_string(),
+        posts: post_iter.map(|post| post.unwrap()).collect(),
+    };
 
     Template::render("index", context)
 }

@@ -9,7 +9,15 @@
             <h1>{{title}}</h1>
             <div class="body">
                 {{index_content}}
-                {{posts}}
+                {{#each posts}}
+                <div class="post">
+                    <div class="name">暱稱：{{name}}</div>
+                    <div class="title">標題：{{title}}</div>
+                    <div class="content">
+                        {{content}}
+                    </div>
+                </div>
+                {{/each}}
             </div>
         </div>
     </body>
