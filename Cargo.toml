@@ -6,3 +6,8 @@ authors = ["Maplewing <sinmaplewing@gmail.com>"]
 [dependencies]
 rocket = "0.3.8"
 rocket_codegen = "0.3.8"
+
+[dependencies.rocket_contrib]
+version = "*"
+default-features = false
+features = ["handlebars_templates"]
