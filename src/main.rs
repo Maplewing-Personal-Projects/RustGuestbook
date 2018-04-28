@@ -70,12 +70,12 @@ fn index() -> Template {
                             }
                          }).unwrap();
         let mut post_with_time = post;
-        post_with_time.created_time = Some(post_with_time.created_time.unwrap().split(' ').nth(0).unwrap().to_string());
+        post_with_time.created_time = Some(post_with_time.created_time.unwrap().split('.').nth(0).unwrap().to_string());
         PostCollection {
             topic: post_with_time,
             reply: reply_iter.map(|reply| {
                 let mut reply_with_time = reply.unwrap();
-                reply_with_time.created_time = Some(reply_with_time.created_time.unwrap().split(' ').nth(0).unwrap().to_string());
+                reply_with_time.created_time = Some(reply_with_time.created_time.unwrap().split('.').nth(0).unwrap().to_string());
                 reply_with_time
             }).collect(),
         }
