@@ -8,10 +8,12 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate rusqlite;
 
+use std::path::{Path, PathBuf};
 use std::collections::HashMap;
 use chrono::Utc;
 #[macro_use] extern crate serde_derive;
 use rocket::response::Redirect;
+use rocket::response::NamedFile;
 use rocket::request::Form;
 use rocket_contrib::Template;
 use rusqlite::Connection;
@@ -48,8 +50,8 @@ fn index() -> Template {
     }).unwrap();
 
     let context = IndexData {
-        title: "Rust GuestBook".to_string(),
-        announcement: "Welcome to my guestbook.".to_string(),
+        title: "Rust 留言板".to_string(),
+        announcement: "歡迎來到我的留言板。".to_string(),
         posts: post_iter.map(|post| post.unwrap()).filter(|post| post.reply_id == None).collect(),
     };
 
@@ -82,12 +84,14 @@ fn create_post(post: Form<Post>) -> Redirect {
     Redirect::to("/")
 }
 
+#[get("/<file..>")]
+fn files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("static/").join(file)).ok()
+}
+
 fn main() {
     rocket::ignite()
-      .mount("/", routes![index])
-      .mount("/", routes![topic_form])
-      .mount("/", routes![reply_form])
-      .mount("/", routes![create_post])
+      .mount("/", routes![index, topic_form, reply_form, create_post, files])
       .attach(Template::fairing())
       .launch();
 }
