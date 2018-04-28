@@ -50,7 +50,7 @@ fn index() -> Template {
     let context = IndexData {
         title: "Rust GuestBook".to_string(),
         announcement: "Welcome to my guestbook.".to_string(),
-        posts: post_iter.map(|post| post.unwrap()).collect(),
+        posts: post_iter.map(|post| post.unwrap()).filter(|post| post.reply_id == None).collect(),
     };
 
     Template::render("index", context)
