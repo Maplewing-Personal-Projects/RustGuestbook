@@ -18,8 +18,8 @@ use rusqlite::Connection;
 
 #[derive(FromForm, Serialize)]
 struct Post {
-    id: Option<String>,
-    reply_id: Option<String>,
+    id: Option<i32>,
+    reply_id: Option<i32>,
     name: String,
     title: String,
     content: String,
