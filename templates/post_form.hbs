@@ -8,11 +8,14 @@
         <div class="entry">
             <h1>{{title}}</h1>
             <div class="body">
-                <form method="post" action="/topic">
+                <form method="post" action="/post">
                     <div> <label for="name">暱稱：</label> <input type="text" name="name"/> </div>
                     <div> <label for="title">標題：</label> <input type="text" name="title"/> </div>
                     <div> <label for="content">內容：</label> </div>
                     <div> <textarea rows="8" cols="50" name="content"></textarea> </div>
+                    {{#if reply_id}}
+                        <div> <input type="hidden" name="reply_id" value="{{reply_id}}"/> </div>
+                    {{/if}}
                     <div> <input type="submit" value="留言"/> </div>
                 </form>
             </div>

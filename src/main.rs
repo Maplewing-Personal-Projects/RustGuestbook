@@ -18,6 +18,7 @@ use rusqlite::Connection;
 
 #[derive(FromForm, Serialize)]
 struct Post {
+    reply_id: String,
     name: String,
     title: String,
     content: String,
@@ -55,17 +56,26 @@ fn index() -> Template {
 #[get("/topic_form")]
 fn topic_form() -> Template {
     let mut context = HashMap::new();
-    context.insert("title", "Rust GuestBook");
-    Template::render("topic_form", context)
+    context.insert("title", "新增留言");
+    Template::render("post_form", context)
 }
 
-#[post("/topic", data="<post>")]
+#[get("/reply_form/<reply_id>")]
+fn topic_form() -> Template {
+    let mut context = HashMap::new();
+    context.insert("title", "回覆留言".to_string());
+    context.insert("reply_id", reply_id.to_string());
+    Template::render("post_form", context)
+}
+
+
+#[post("/post", data="<post>")]
 fn create_topic(post: Form<Post>) -> Redirect {
     let database_url = "db/guestbook.db";
     let post_data = post.get();
     let conn = Connection::open(database_url).unwrap();
-    conn.execute("INSERT INTO post (name, title, content, created_time) VALUES (?1, ?2, ?3, ?4)",
-                 &[&post_data.name, &post_data.title, &post_data.content, &Utc::now().naive_utc().to_string()]).unwrap();
+    conn.execute("INSERT INTO post (reply_id, name, title, content, created_time) VALUES (?1, ?2, ?3, ?4, ?5)",
+                 &[&post_data.reply_id, &post_data.name, &post_data.title, &post_data.content, &Utc::now().naive_utc().to_string()]).unwrap();
     Redirect::to("/")
 }
 
