@@ -25,6 +25,7 @@ struct Post {
     name: String,
     title: String,
     content: String,
+    created_time: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -44,31 +45,39 @@ struct IndexData{
 fn index() -> Template {
     let database_url = "db/guestbook.db";
     let conn = Connection::open(database_url).unwrap();
-    let mut stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post WHERE reply_id IS NULL ORDER BY created_time DESC").unwrap();
+    let mut stmt = conn.prepare("SELECT id, reply_id, name, title, content, created_time FROM post WHERE reply_id IS NULL ORDER BY id DESC").unwrap();
     let post_iter = stmt.query_map(&[], |row| {
         Post {
-                   id: row.get(0),
-             reply_id: row.get(1),
-                 name: row.get(2),
-                title: row.get(3),
-              content: row.get(4),
+                    id: row.get(0),
+              reply_id: row.get(1),
+                  name: row.get(2),
+                 title: row.get(3),
+               content: row.get(4),
+          created_time: row.get(5),
         }
     }).unwrap();
     
-    let mut reply_stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post WHERE reply_id = :id").unwrap();
+    let mut reply_stmt = conn.prepare("SELECT id, reply_id, name, title, content, created_time FROM post WHERE reply_id = :id").unwrap();
     let posts = post_iter.map(|post| post.unwrap()).map(|post| {
         let reply_iter = reply_stmt.query_map_named(&[(":id", &post.id)], |row| {
                             Post {
-                                      id: row.get(0),
-                                reply_id: row.get(1),
-                                    name: row.get(2),
-                                   title: row.get(3),
-                                 content: row.get(4),
+                                        id: row.get(0),
+                                  reply_id: row.get(1),
+                                      name: row.get(2),
+                                     title: row.get(3),
+                                   content: row.get(4),
+                              created_time: row.get(5),
                             }
                          }).unwrap();
+        let mut post_with_time = post;
+        post_with_time.created_time = Some(post_with_time.created_time.unwrap().split(' ').nth(0).unwrap().to_string());
         PostCollection {
-            topic: post,
-            reply: reply_iter.map(|reply| reply.unwrap()).collect(),
+            topic: post_with_time,
+            reply: reply_iter.map(|reply| {
+                let mut reply_with_time = reply.unwrap();
+                reply_with_time.created_time = Some(reply_with_time.created_time.unwrap().split(' ').nth(0).unwrap().to_string());
+                reply_with_time
+            }).collect(),
         }
     }).collect();
 
