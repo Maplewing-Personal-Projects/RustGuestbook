@@ -18,6 +18,7 @@ use rusqlite::Connection;
 
 #[derive(FromForm, Serialize)]
 struct Post {
+    id: Option<String>,
     reply_id: Option<String>,
     name: String,
     title: String,
@@ -35,13 +36,14 @@ struct IndexData{
 fn index() -> Template {
     let database_url = "db/guestbook.db";
     let conn = Connection::open(database_url).unwrap();
-    let mut stmt = conn.prepare("SELECT reply_id, name, title, content FROM post").unwrap();
+    let mut stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post").unwrap();
     let post_iter = stmt.query_map(&[], |row| {
         Post {
-           reply_id: row.get(0),
-               name: row.get(1),
-              title: row.get(2),
-            content: row.get(3),
+                 id: row.get(0),
+           reply_id: row.get(1),
+               name: row.get(2),
+              title: row.get(3),
+            content: row.get(4),
         }
     }).unwrap();
 
