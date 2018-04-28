@@ -84,7 +84,7 @@ fn create_post(post: Form<Post>) -> Redirect {
     Redirect::to("/")
 }
 
-#[get("/<file..>")]
+#[get("/static/<file..>")]
 fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
 }
