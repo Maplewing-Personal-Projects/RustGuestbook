@@ -1,3 +1,48 @@
 body{
+    background-color: #F1E3F3;
     text-align: center;
+}
+
+a{
+    color: #3590F3;
+    text-decoration: none;
+}
+
+a:hover, a:active{
+    color: #CD84F3;
+}
+
+.announcement{
+    margin-bottom: 10px;
+}
+
+.post{
+    width: 300px;
+    margin: 30px auto;
+    padding: 10px;
+    text-align: left;
+    border: 5px solid white;
+    border-radius: 5px;
+    box-shadow: 10px 10px 5px #888;
+    background-color: #C2BBF0;
+}
+
+.post .title{
+    font-weight: bolder;
+}
+
+.post .content{
+    min-height: 150px;
+    margin: 10px -10px;
+    padding: 10px;
+    background-color: #8FB8ED;
+}
+
+.reply .post{
+    background-color: #F2E1EF;
+}
+
+.reply .post .content{
+    min-height: 10px;
+    background-color: #CFE1EF;
 }
