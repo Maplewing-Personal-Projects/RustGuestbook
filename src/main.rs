@@ -61,10 +61,10 @@ fn topic_form() -> Template {
 }
 
 #[get("/reply_form/<reply_id>")]
-fn reply_form() -> Template {
+fn reply_form(reply_id: String) -> Template {
     let mut context = HashMap::new();
     context.insert("title", "回覆留言".to_string());
-    context.insert("reply_id", reply_id.to_string());
+    context.insert("reply_id", reply_id);
     Template::render("post_form", context)
 }
 
