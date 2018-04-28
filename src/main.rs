@@ -57,7 +57,7 @@ fn index() -> Template {
     
     let mut reply_stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post WHERE reply_id = :id").unwrap();
     let posts = post_iter.map(|post| post.unwrap()).map(|post| {
-        let reply_iter = reply_stmt.query_map_named(&[(":id", &post.id.unwrap())], |row| {
+        let reply_iter = reply_stmt.query_map_named(&[(":id", &post.id)], |row| {
                             Post {
                                       id: row.get(0),
                                 reply_id: row.get(1),
