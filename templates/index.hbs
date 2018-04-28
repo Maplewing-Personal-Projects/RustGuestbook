@@ -21,6 +21,16 @@
                         <div class="title">{{topic.name}}：{{topic.title}}</div>
                         <div class="content">
                             {{topic.content}}
+                            <div class="reply">
+                            {{#each topic.reply}}
+                                <div class="post">
+                                    <div class="title">{{name}}：{{title}}</div>
+                                    <div class="content">
+                                        {{content}}
+                                     </div>
+                                </div>
+                            {{/each}}
+                            </div>
                         </div>
                         <div class="reply_button"><a href="reply_form/{{topic.id}}">回覆本篇留言</a></div>
                     </div>
