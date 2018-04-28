@@ -44,7 +44,7 @@ struct IndexData{
 fn index() -> Template {
     let database_url = "db/guestbook.db";
     let conn = Connection::open(database_url).unwrap();
-    let mut stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post WHERE reply_id IS NULL").unwrap();
+    let mut stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post WHERE reply_id IS NULL ORDER BY created_time DESC").unwrap();
     let post_iter = stmt.query_map(&[], |row| {
         Post {
                    id: row.get(0),
