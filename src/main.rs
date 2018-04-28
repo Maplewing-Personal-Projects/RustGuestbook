@@ -28,31 +28,54 @@ struct Post {
 }
 
 #[derive(Serialize)]
+struct PostCollection{
+    topic: Post,
+    reply: Vec<Post>,
+}
+
+#[derive(Serialize)]
 struct IndexData{
     title: String,
     announcement: String,
-    posts: Vec<Post>,
+    posts: Vec<PostCollection>,
 }
 
 #[get("/")]
 fn index() -> Template {
     let database_url = "db/guestbook.db";
     let conn = Connection::open(database_url).unwrap();
-    let mut stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post").unwrap();
+    let mut stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post WHERE reply_id = NULL").unwrap();
     let post_iter = stmt.query_map(&[], |row| {
         Post {
-                 id: row.get(0),
-           reply_id: row.get(1),
-               name: row.get(2),
-              title: row.get(3),
-            content: row.get(4),
+                   id: row.get(0),
+             reply_id: row.get(1),
+                 name: row.get(2),
+                title: row.get(3),
+              content: row.get(4),
         }
     }).unwrap();
+    
+    let mut reply_stmt = conn.prepare("SELECT id, reply_id, name, title, content FROM post WHERE reply_id = ?1").unwrap();
+    let posts = post_iter.map(|post| post.unwrap()).map(|post| {
+        let reply_iter = reply_stmt.query_map(&[&post.id], |row| {
+                            Post {
+                                      id: row.get(0),
+                                reply_id: row.get(1),
+                                    name: row.get(2),
+                                   title: row.get(3),
+                                 content: row.get(4),
+                            }
+                         }).unwrap();
+        PostCollection {
+            topic: post,
+            reply: reply_iter.map(|reply| reply.unwrap()).collect(),
+        }
+    }).collect();
 
     let context = IndexData {
         title: "Rust 留言板".to_string(),
         announcement: "歡迎來到我的留言板。".to_string(),
-        posts: post_iter.map(|post| post.unwrap()).filter(|post| post.reply_id == None).collect(),
+        posts: posts,
     };
 
     Template::render("index", context)
