@@ -61,7 +61,7 @@ fn topic_form() -> Template {
 }
 
 #[get("/reply_form/<reply_id>")]
-fn topic_form() -> Template {
+fn reply_form() -> Template {
     let mut context = HashMap::new();
     context.insert("title", "回覆留言".to_string());
     context.insert("reply_id", reply_id.to_string());
@@ -70,7 +70,7 @@ fn topic_form() -> Template {
 
 
 #[post("/post", data="<post>")]
-fn create_topic(post: Form<Post>) -> Redirect {
+fn create_post(post: Form<Post>) -> Redirect {
     let database_url = "db/guestbook.db";
     let post_data = post.get();
     let conn = Connection::open(database_url).unwrap();
@@ -83,7 +83,8 @@ fn main() {
     rocket::ignite()
       .mount("/", routes![index])
       .mount("/", routes![topic_form])
-      .mount("/", routes![create_topic])
+      .mount("/", routes![reply_form])
+      .mount("/", routes![create_post])
       .attach(Template::fairing())
       .launch();
 }
